@@ -13,7 +13,6 @@ var methods = {
 module.exports = function (db, command, opts) {
   if(!command) {
     opts = minimist(process.argv.slice(2))
-    console.error(opts)
     command = opts._.length ? opts._.shift().split('.') : []
     delete opts._
   }
@@ -29,17 +28,9 @@ module.exports = function (db, command, opts) {
 
     var type = (obj === db ? methods : obj.methods)[method]
 
-    console.error('apply', command, method, type)
-
     if(type === 'source') {
-      console.error('read source', method, opts)
       pull(
         obj[method](opts),
-        pull.through(function (d) {
-          console.log('STREAM', d)
-        }, function () {
-          console.log("END")
-        }),
         Stringify(),
         Stdout()
       )
@@ -61,5 +52,6 @@ module.exports = function (db, command, opts) {
     })
   }
 }
+
 
 
