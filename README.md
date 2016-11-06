@@ -1,0 +1,6 @@
+# flumecli
+
+
+## License
+
+MIT
