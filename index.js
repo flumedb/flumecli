@@ -2,6 +2,7 @@ var minimist = require('minimist')
 var Stdout = require('pull-stdio').stdout
 var Stringify = require('pull-json-doubleline').stringify
 var pull = require('pull-stream/pull')
+var path = require('path')
 
 var methods = {
   get: 'async',
@@ -10,7 +11,7 @@ var methods = {
 }
 
 //flumedb, array, opts
-module.exports = function (db, command, opts) {
+module.exports = function (db, command, opts, name) {
   if(!command) {
     opts = minimist(process.argv.slice(2))
     command = opts._.length ? opts._.shift().split('.') : []
@@ -47,11 +48,21 @@ module.exports = function (db, command, opts) {
 
   }
   else {
-    db.since.once(function () {
-      console.log(db.since.value)
-    })
+    name = name || ('node ' + path.relative(process.cwd(), process.argv[1]))
+
+    console.log('usage: '+(name)+' COMMAND {options}')
+    console.log('where COMMAND is one of:')
+    var lines = []
+    for(var key in db) {
+      var type = methods[key]
+      if(type) console.log(key, '# '+type)
+      if(db[key].methods) {
+          for(var _key in db[key]) {
+            var type = db[key].methods[_key]
+            if(type) console.log(key+'.'+_key, '# '+type)
+          }
+      }
+    }
   }
 }
-
-
 
