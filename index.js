@@ -47,10 +47,12 @@ module.exports = function (db, command, opts, name) {
       obj[method](opts, function (err, data) {
         if(err) throw err
         console.log(JSON.stringify(data, null, 2))
+        db.close(function () {})
       })
-    else if(type === 'sync')
+    else if(type === 'sync') {
       console.log(JSON.stringify(obj[method](opts)), null, 2)
-    else
+      db.close(function () {})
+    } else
       throw new Error('expected type=source, async, or sync but got:'+type)
 
   }
@@ -70,6 +72,8 @@ module.exports = function (db, command, opts, name) {
           }
       }
     }
+    db.close(function () {})
   }
 }
+
 
