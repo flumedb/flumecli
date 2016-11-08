@@ -10,12 +10,19 @@ var methods = {
   stream: 'source'
 }
 
+function isEmpty (opts) {
+  for(var k in opts) return false
+  return true
+}
+
 //flumedb, array, opts
 module.exports = function (db, command, opts, name) {
   if(!command) {
     opts = minimist(process.argv.slice(2))
-    command = opts._.length ? opts._.shift().split('.') : []
+    var _ = opts._
+    command = _.length ? _.shift().split('.') : []
     delete opts._
+    if(isEmpty(opts)) opts = _.shift()
   }
 
   //let database load...
